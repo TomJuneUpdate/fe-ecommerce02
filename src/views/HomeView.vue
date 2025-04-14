@@ -1,9 +1,15 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/images/logo.png" />
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam
+      numquam est nobis laborum, voluptates recusandae a accusamus enim odit
+      reiciendis iusto voluptas quis quod nulla exercitationem quos delectus
+      accusantium harum!
+    </p>
   </div>
 </template>
-
 <script>
-export default {};
+export default {
+  name: "HomeView",
+};
 </script>
