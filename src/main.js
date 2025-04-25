@@ -4,8 +4,14 @@ import router from "./router";
 
 // Pinia configuration
 import { createPinia } from "pinia";
+const pinia = createPinia(); // ✅ tạo instance trước
 
-// Emiiter configuration
+// Swiper Config
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+// Emitter configuration
 import mitt from "mitt";
 const emitter = mitt();
 
@@ -24,6 +30,6 @@ const vuetify = createVuetify({
 createApp(App)
   .use(vuetify)
   .provide("Emitter", emitter)
-  .use(createPinia)
+  .use(pinia) // ✅ truyền pinia instance đã tạo
   .use(router)
   .mount("#app");

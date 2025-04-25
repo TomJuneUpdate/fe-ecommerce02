@@ -2,10 +2,12 @@
   <div class="layout">
     <v-layout>
       <CartDrawer />
-      <v-main>
+
+      <AppNav />
+      <FixedNav />
+      <v-main style="padding-top: 155px">
         <slot></slot>
       </v-main>
-      <AppNav />
       <AppFooter />
     </v-layout>
   </div>
@@ -15,12 +17,14 @@
 import AppNav from "@/components/global/AppNav.vue";
 import CartDrawer from "@/components/global/CartDrawer.vue";
 import AppFooter from "@/components/global/AppFooter.vue";
+import FixedNav from "./FixedNav.vue";
 
 export default {
   components: {
     AppNav,
     AppFooter,
     CartDrawer,
+    FixedNav,
   },
 };
 </script>

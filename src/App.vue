@@ -1,13 +1,26 @@
 <template>
-  <AppLayout> <router-view /></AppLayout>
+  <v-app>
+    <component :is="layout">
+      <router-view />
+    </component>
+  </v-app>
 </template>
 
 <script>
-import AppLayout from "@/components/global/AppLayout";
+import AppLayout from "@/components/global/AppLayout.vue"; // layout cho user
+import AdminLayout from "@/components/global/AdminLayout.vue"; // layout cho admin
 
 export default {
   components: {
     AppLayout,
+    AdminLayout,
+  },
+  computed: {
+    layout() {
+      // chọn layout dựa trên meta trong route
+      const layoutType = this.$route.meta.layout;
+      return layoutType === "admin" ? "AdminLayout" : "AppLayout";
+    },
   },
 };
 </script>
@@ -31,5 +44,8 @@ nav {
       color: #42b983;
     }
   }
+}
+.v-rating__wrapper {
+  margin-right: 3px;
 }
 </style>
