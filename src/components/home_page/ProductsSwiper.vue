@@ -67,8 +67,9 @@
                   transition: 0.2 all ease-in-out;
                   opacity: 0;
                 "
-                >Quick View</v-btn
-              >
+                @click="openQuickView(item)"
+                >Quick View
+              </v-btn>
             </div>
           </v-hover>
           <v-card-text class="pl-0 pb-1">
@@ -117,9 +118,10 @@
               class="py-2 px-12"
               style="text-transform: none; border-radius: 30px"
               variant="outlined"
+              color="blue"
               @click="
                 $router.push({
-                  name: 'product_details',
+                  name: 'ProductDetails',
                   params: { productId: item.id },
                 })
               "
@@ -146,6 +148,12 @@ import { Navigation, Pagination, Autoplay } from "swiper";
 import { VSkeletonLoader } from "vuetify/lib/components";
 export default {
   name: "ProductsSwiper",
+  inject: ["Emitter"],
+  methods: {
+    openQuickView(product) {
+      this.Emitter.emit("openQuickView", product);
+    },
+  },
   props: {
     products: {
       type: Array,

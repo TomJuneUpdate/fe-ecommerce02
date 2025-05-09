@@ -11,7 +11,10 @@
         >
           <v-card elevation="0" class="pb-5">
             <v-hover v-slot="{ isHovering, props }">
-              <div class="img-parent" style="height: 300px; overflow: hidden">
+              <div
+                class="img-parent position-relative"
+                style="height: 300px; overflow: hidden"
+              >
                 <v-img
                   v-bind="props"
                   class="w-100"
@@ -24,6 +27,26 @@
                     isHovering ? 1.3 : 1
                   }`"
                 ></v-img>
+                <v-btn
+                  density="compact"
+                  width="90"
+                  height="30"
+                  variant="outlined"
+                  class="bg-white quick-view-btn"
+                  style="
+                    text-transform: none;
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    border-radius: 30px;
+                    font-size: 12px;
+                    transition: 0.2 all ease-in-out;
+                    opacity: 0;
+                  "
+                  @click="openQuickView(item)"
+                  >Quick View
+                </v-btn>
               </div>
             </v-hover>
             <v-card-text class="pl-0 pb-1">
@@ -75,7 +98,7 @@
                 variant="outlined"
                 @click="
                   $router.push({
-                    name: 'product_details',
+                    name: 'ProductDetails',
                     params: { productId: item.id },
                   })
                 "
@@ -92,9 +115,13 @@
 import { productsModule } from "@/stores/products";
 import { mapActions, mapState } from "pinia";
 export default {
+  inject: ["Emitter"],
   data: () => ({ showenItem: {} }),
   methods: {
     ...mapActions(productsModule, ["getProductsByCategory"]),
+    openQuickView(product) {
+      this.Emitter.emit("openQuickView", product);
+    },
   },
   computed: {
     ...mapState(productsModule, ["categoryProducts"]),
@@ -109,3 +136,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.img-parent:hover {
+  .quick-view-btn {
+    opacity: 1 !important;
+  }
+}
+</style>

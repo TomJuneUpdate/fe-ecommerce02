@@ -4,7 +4,7 @@
       ><v-container fluid>
         <v-row>
           <v-col cols="2">
-            <router-link :to="{ name: 'home' }">
+            <router-link :to="{ name: 'HomeView' }">
               <img src="@/assets/images/logo.png" alt="logo" />
             </router-link>
           </v-col>
@@ -16,12 +16,12 @@
               <li v-for="category in categories" :key="category.title">
                 <router-link
                   :to="{
-                    name: 'products_category',
+                    name: 'ProductsCategory',
                     params: { category: category.route, title: category.title },
                   }"
                   style="color: white; text-decoration: none"
-                  >{{ category.title }}</router-link
-                >
+                  >{{ category.title }}
+                </router-link>
               </li>
             </ul>
           </v-col>
@@ -42,9 +42,10 @@
             >
               <v-badge
                 location="right top"
-                content="2"
-                color="blue"
+                :content="cartItems.length"
+                color="red"
                 offsetX="-12"
+                v-if="cartItems.length"
               ></v-badge>
               <svg
                 viewBox="0 0 1024 1024"
@@ -73,16 +74,18 @@
 </template>
 
 <script>
+import { cartStore } from "@/stores/cart";
 import { productsModule } from "@/stores/products";
 import { mapState } from "pinia";
 export default {
   inject: ["Emitter"],
   computed: {
     ...mapState(productsModule, ["categories"]),
+    ...mapState(cartStore, ["cartItems"]),
   },
   methods: {
     toggleDrawer() {
-      this.Emitter.emit("toggle-drawer");
+      this.Emitter.emit("toggleDrawer");
     },
   },
 };

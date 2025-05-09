@@ -1,5 +1,5 @@
 <template>
-  <div class="product-details mt-16">
+  <div class="singleProducts-details mt-16">
     <h1>Product Details</h1>
     <v-container fluid>
       <v-row class="d-flex align-center justify-center">
@@ -8,7 +8,7 @@
             :src="tab ? tab : singleProducts.thumbnail"
             class="w-100"
             alt=""
-            height="500"
+            height="100%"
             v-if="!loading"
           />
           <v-skeleton-loader
@@ -104,6 +104,15 @@
               />
               <v-icon size="20" @click="quantity++">mdi-plus</v-icon>
             </div>
+            <v-card-text class="pl-0">
+              Subtotal: ${{
+                Math.ceil(
+                  singleProducts.price -
+                    (singleProducts.price * singleProducts.discountPercentage) /
+                      100
+                ) * quantity
+              }}
+            </v-card-text>
             <v-card-actions class="mt-7 pl-0">
               <v-btn
                 variant="outlined"
@@ -115,6 +124,7 @@
                 class="w-75 text-white"
                 density="compact"
                 height="50px"
+                @click="addToCart(singleProducts)"
                 >Add To Cart
               </v-btn>
             </v-card-actions>
@@ -126,6 +136,7 @@
 </template>
 
 <script>
+import { cartStore } from "@/stores/cart";
 import { productsModule } from "@/stores/products";
 import { mapActions, mapState } from "pinia";
 import { VSkeletonLoader } from "vuetify/lib/components";
@@ -141,11 +152,25 @@ export default {
   },
   methods: {
     ...mapActions(productsModule, ["getSingleProductsById"]),
+    ...mapActions(cartStore, ["addItem"]),
+    addToCart(item) {
+      item.quantity = this.quantity;
+      this.addItem(item);
+    },
   },
+  watch: {
+    async $route() {
+      this.loading = true;
+      await this.getSingleProductsById(this.$route.params.productId);
+      this.tab = this.singleProducts.thumbnail; // reset tab về đúng thumbnail mới
+      this.loading = false;
+    },
+  },
+
   async mounted() {
-    this.tab = "";
     this.loading = true;
     await this.getSingleProductsById(this.$route.params.productId);
+    this.tab = this.singleProducts.thumbnail; // cũng reset tab luôn
     this.loading = false;
   },
 };

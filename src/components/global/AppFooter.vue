@@ -16,7 +16,7 @@
                 class="pt-0"
                 ><router-link
                   :to="{
-                    name: 'products_category',
+                    name: 'ProductsCategory',
                     params: { category: category.route, title: category.title },
                   }"
                   style="color: black; text-decoration: none"

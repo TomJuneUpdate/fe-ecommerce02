@@ -17,7 +17,6 @@
       title-color="blue"
     />
     <WhyShopwithus />
-    <QuickView />
   </div>
 </template>
 <script>
@@ -29,12 +28,10 @@ import ProductsSwiper from "@/components/home_page/ProductsSwiper.vue";
 import NewProducts from "@/components/home_page/NewProducts.vue";
 import QualityFeatures from "@/components/home_page/QualityFeatures.vue";
 import WhyShopwithus from "@/components/home_page/WhyShopwithus.vue";
-import QuickView from "@/components/home_page/QuickView.vue";
 import { productsModule } from "@/stores/products";
 import { mapActions, mapState } from "pinia";
 
 export default {
-  name: "HomeView",
   components: {
     TopOffers,
     UpperBanner,
@@ -44,7 +41,6 @@ export default {
     NewProducts,
     QualityFeatures,
     WhyShopwithus,
-    QuickView,
   },
   computed: {
     ...mapState(productsModule, [

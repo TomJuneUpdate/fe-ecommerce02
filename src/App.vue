@@ -1,26 +1,37 @@
 <template>
   <v-app>
-    <component :is="layout">
-      <router-view />
-    </component>
+    <router-view />
+    <QuickView />
+    <v-snackbar v-model="bar" location="left bottom" max-width="300">
+      {{ itemTitle }} has been added to your cart successfully!
+      <template v-slot:actions>
+        <v-icon @click="bar = false">mdi-close</v-icon>
+      </template>
+    </v-snackbar>
+    <LoginView></LoginView>
   </v-app>
 </template>
 
 <script>
-import AppLayout from "@/components/global/AppLayout.vue"; // layout cho user
-import AdminLayout from "@/components/global/AdminLayout.vue"; // layout cho admin
-
+import QuickView from "./components/global/QuickView.vue";
+import LoginView from "./views/auth/LoginView.vue";
+LoginView;
 export default {
+  inject: ["Emitter"],
   components: {
-    AppLayout,
-    AdminLayout,
+    QuickView,
+    LoginView,
   },
-  computed: {
-    layout() {
-      // chọn layout dựa trên meta trong route
-      const layoutType = this.$route.meta.layout;
-      return layoutType === "admin" ? "AdminLayout" : "AppLayout";
-    },
+  data: () => ({
+    bar: false,
+    itemTitle: "",
+  }),
+  mounted() {
+    // mở snackbar khi có sự kiện từ emitter
+    this.Emitter.on("showMsg", (msg) => {
+      this.itemTitle = msg;
+      this.bar = true;
+    });
   },
 };
 </script>

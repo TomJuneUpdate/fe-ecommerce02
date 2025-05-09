@@ -1,6 +1,6 @@
 <template>
   <div class="quick-view mt-16">
-    <v-dialog v-model="dialog" max-width="900" max-height="500">
+    <v-dialog v-model="dialog" max-width="1000" max-height="500">
       <v-icon
         style="
           position: absolute;
@@ -20,7 +20,7 @@
           <v-row>
             <v-col cols="5">
               <img
-                :src="tab ? tab : singleProducts.thumbnail"
+                :src="tab ? tab : product.thumbnail"
                 class="w-100"
                 alt=""
                 height="400"
@@ -30,21 +30,31 @@
                 v-if="loading"
                 type="image, image, image"
               ></v-skeleton-loader>
-              <v-tabs center-active height="220" v-model="tab" class="mt-5">
+              <v-tabs center-active height="220" v-model="tab" class="mt-10">
                 <v-tab
-                  v-for="(pic, i) in singleProducts.images"
+                  v-for="(pic, i) in product.images"
                   :key="i"
-                  class="mx-10 my-5 w-100"
+                  class="mx-10 my-5"
                   :value="pic"
                 >
-                  <img :src="pic" alt="" width="100" />
+                  <v-skeleton-loader
+                    v-if="loading"
+                    type="article, article, article"
+                  ></v-skeleton-loader>
+                  <img
+                    :src="pic"
+                    alt=""
+                    width="100"
+                    height="100"
+                    v-if="!loading"
+                  />
                 </v-tab>
               </v-tabs>
             </v-col>
             <v-col cols="5" class="pt-0 pl-6">
               <v-skeleton-loader
                 v-if="loading"
-                type="article"
+                type="article, article, article"
               ></v-skeleton-loader>
               <v-card elevation="0" v-if="!loading">
                 <v-card-title
@@ -55,15 +65,14 @@
                     white-space: pre-wrap;
                   "
                 >
-                  ({{ singleProducts.title }}) Sample -
-                  {{ singleProducts.category }} For Sale
+                  ({{ product.title }}) Sample - {{ product.category }} For Sale
                 </v-card-title>
                 <div
                   class="rating-parent d-flex align-center"
                   style="gap: 10px"
                 >
                   <v-rating
-                    v-model="singleProducts.rating"
+                    v-model="product.rating"
                     half-increments
                     readonly
                     color="yellow darken-3"
@@ -73,34 +82,32 @@
                   <span
                     class="mt-1"
                     style="font-size: 13px; color: rgb(96, 96, 96)"
-                    >Stock: {{ singleProducts.stock }}</span
+                    >Stock: {{ product.stock }}</span
                   >
                 </div>
                 <v-card-text
                   class="px-0"
                   style="font-size: 13px; color: rgb(96, 96, 96)"
-                  >{{ singleProducts.description }}
+                  >{{ product.description }}
                 </v-card-text>
                 <v-card-text
                   class="px-0 pt-0"
                   style="font-size: 13px; color: rgb(96, 96, 96)"
-                  >Brand: {{ singleProducts.brand }}
+                  >Brand: {{ product.brand }}
                 </v-card-text>
                 <v-card-text
                   class="px-0 pt-0"
                   style="font-size: 13px; color: rgb(96, 96, 96)"
                   >Availabilty:
-                  {{ singleProducts.stock > 0 ? "In Stock" : "Out Of Stock" }}
+                  {{ product.stock > 0 ? "In Stock" : "Out Of Stock" }}
                 </v-card-text>
                 <v-card-text class="pl-0 pt-0"
-                  ><del>${{ singleProducts.price }}</del> From
+                  ><del>${{ product.price }}</del> From
                   <span style="font-weight: 900; font-size: 16px">
                     ${{
                       Math.ceil(
-                        singleProducts.price -
-                          (singleProducts.price *
-                            singleProducts.discountPercentage) /
-                            100
+                        product.price -
+                          (product.price * product.discountPercentage) / 100
                       )
                     }}</span
                   >
@@ -134,10 +141,8 @@
                 <v-card-text class="pl-0"
                   >Subtotal: ${{
                     Math.ceil(
-                      singleProducts.price -
-                        (singleProducts.price *
-                          singleProducts.discountPercentage) /
-                          100
+                      product.price -
+                        (product.price * product.discountPercentage) / 100
                     ) * quantity
                   }}</v-card-text
                 >
@@ -152,6 +157,8 @@
                     class="w-75 text-white"
                     density="compact"
                     height="50px"
+                    @click="addToCart(product)"
+                    :loading="btnLoading"
                     >Add To Cart
                   </v-btn>
                 </v-card-actions>
@@ -165,28 +172,43 @@
 </template>
 
 <script>
-import { productsModule } from "@/stores/products";
-import { mapActions, mapState } from "pinia";
 import { VSkeletonLoader } from "vuetify/lib/components";
+import { cartStore } from "@/stores/cart";
+import { mapActions } from "pinia";
 export default {
+  inject: ["Emitter"],
+  methods: {
+    ...mapActions(cartStore, ["addItem"]),
+    addToCart(item) {
+      item.quantity = this.quantity;
+      this.btnLoading = true;
+      setTimeout(() => {
+        this.btnLoading = false;
+        this.addItem(item);
+        this.Emitter.emit("toggleDrawer");
+        this.Emitter.emit("showMsg", item.title);
+        this.dialog = false;
+      }, 1000);
+    },
+  },
   data: () => ({
     loading: false,
     tab: "",
     quantity: 1,
-    dialog: true,
+    dialog: false,
+    product: "",
+    btnLoading: false,
   }),
   components: { VSkeletonLoader },
-  computed: {
-    ...mapState(productsModule, ["singleProducts"]),
-  },
-  methods: {
-    ...mapActions(productsModule, ["getSingleProductsById"]),
-  },
-  async mounted() {
-    this.tab = "";
-    this.loading = true;
-    await this.getSingleProductsById(18);
-    this.loading = false;
+  mounted() {
+    this.Emitter.on("openQuickView", (product) => {
+      this.loading = true;
+      this.product = product;
+      this.dialog = true;
+      setTimeout(() => {
+        this.loading = false;
+      }, 1000);
+    });
   },
 };
 </script>
@@ -197,12 +219,10 @@ export default {
     width: 5px;
   }
   &::-webkit-scrollbar-thumb {
-    width: 5px;
-    background-color: rgb(105, 105, 105);
+    background-color: rgb(73, 71, 71);
   }
   &::-webkit-scrollbar-track {
-    width: 5px;
-    background-color: rgb(206, 199, 199);
+    background-color: rgb(210, 204, 204);
   }
 }
 </style>

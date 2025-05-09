@@ -1,7 +1,9 @@
 <template>
   <div class="new-products pt-12">
     <div class="title mb-10 px-5 d-flex align-center justify-space-between">
-      <h2 style="font-weight: 900; font-size: 30px">New Products</h2>
+      <h2 style="font-weight: 900; font-size: 30px; color: black">
+        New Products
+      </h2>
       <a href="#" class="text-black" style="font-size: 14px">Shop All</a>
     </div>
     <v-container fluid>
@@ -14,7 +16,7 @@
           </v-row>
         </v-col>
         <v-col cols="7" class="pt-15" v-else>
-          <h2 style="color: #000">Products</h2>
+          <!-- <h2 style="color: #000">Products</h2> -->
           <Swiper
             :pagination="{ el: '.swiper-pagination', clickable: true }"
             :modules="modules"
@@ -30,7 +32,7 @@
               <v-card elevation="0" class="pb-5">
                 <v-hover v-slot="{ isHovering, props }">
                   <div
-                    class="img-parent"
+                    class="img-parent position-relative"
                     style="height: 300px; overflow: hidden"
                   >
                     <v-img
@@ -45,6 +47,26 @@
                         isHovering ? 1.3 : 1
                       }`"
                     ></v-img>
+                    <v-btn
+                      density="compact"
+                      width="60"
+                      height="30"
+                      variant="outlined"
+                      class="bg-white quick-view-btn"
+                      style="
+                        text-transform: none;
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        border-radius: 30px;
+                        font-size: 12px;
+                        transition: 0.2 all ease-in-out;
+                        opacity: 0;
+                      "
+                      @click="openQuickView(item)"
+                      >Quick View
+                    </v-btn>
                   </div>
                 </v-hover>
                 <v-card-text class="pl-0 pb-1">
@@ -97,7 +119,7 @@
                     variant="outlined"
                     @click="
                       $router.push({
-                        name: 'product_details',
+                        name: 'ProductDetails',
                         params: { productId: item.id },
                       })
                     "
@@ -122,6 +144,12 @@ import { Pagination, Autoplay } from "swiper";
 import { VSkeletonLoader } from "vuetify/lib/components";
 export default {
   name: "ProductsSwiper",
+  inject: ["Emitter"],
+  methods: {
+    openQuickView(product) {
+      this.Emitter.emit("openQuickView", product);
+    },
+  },
   props: {
     products: {
       type: Array,
@@ -143,3 +171,11 @@ export default {
   }),
 };
 </script>
+
+<style lang="scss">
+.img-parent:hover {
+  .quick-view-btn {
+    opacity: 1 !important;
+  }
+}
+</style>

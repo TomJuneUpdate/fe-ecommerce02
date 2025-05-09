@@ -2,11 +2,10 @@
   <div class="layout">
     <v-layout>
       <CartDrawer />
-
       <AppNav />
       <FixedNav />
       <v-main style="padding-top: 155px">
-        <slot></slot>
+        <router-view />
       </v-main>
       <AppFooter />
     </v-layout>

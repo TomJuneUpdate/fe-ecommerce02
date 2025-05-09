@@ -5,7 +5,7 @@
       <v-container fluid>
         <v-row>
           <v-col cols="3">
-            <router-link :to="{ name: 'home' }">
+            <router-link :to="{ name: 'HomeView' }">
               <img src="@/assets/images/logo.png" alt="logo" />
             </router-link>
           </v-col>
@@ -76,7 +76,10 @@
                 </svg>
                 <span>Wish Lists</span>
               </div>
-              <div class="signin d-flex flex-column align-center text-orange">
+              <div
+                class="signin d-flex flex-column align-center text-orange"
+                @click="openLogin"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -104,9 +107,10 @@
               >
                 <v-badge
                   location="right top"
-                  content="2"
-                  color="blue"
+                  :content="cartItems.length"
+                  color="red"
                   offsetX="-12"
+                  v-if="cartItems.length"
                 ></v-badge>
                 <svg
                   viewBox="0 0 1024 1024"
@@ -138,12 +142,12 @@
               <li v-for="category in categories" :key="category.title">
                 <router-link
                   :to="{
-                    name: 'products_category',
+                    name: 'ProductsCategory',
                     params: { category: category.route, title: category.title },
                   }"
                   style="color: white; text-decoration: none"
-                  >{{ category.title }}</router-link
-                >
+                  >{{ category.title }}
+                </router-link>
               </li>
             </ul>
           </v-col>
@@ -205,18 +209,23 @@
   </div>
 </template>
 <script>
+import { cartStore } from "@/stores/cart";
 import { productsModule } from "@/stores/products";
 import { mapState } from "pinia";
 
 export default {
   inject: ["Emitter"],
   methods: {
+    openLogin() {
+      this.Emitter.emit("openLogin"); // Emit the event
+    },
     toggleDrawer() {
-      this.Emitter.emit("toggle-drawer");
+      this.Emitter.emit("toggleDrawer");
     },
   },
   computed: {
     ...mapState(productsModule, ["categories"]),
+    ...mapState(cartStore, ["cartItems"]),
   },
   data: () => ({
     selectedLang: [
