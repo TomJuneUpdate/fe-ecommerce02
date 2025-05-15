@@ -1,7 +1,11 @@
 <template>
   <div class="order-manage">
     <h2 class="text-black">Order</h2>
-    <BaseTable />
+    <BaseTable
+      :columns="['ID', 'Customer', 'Total', 'Status', 'Actions']"
+      :data="orders"
+      type="hover"
+    />
   </div>
 </template>
 <script>

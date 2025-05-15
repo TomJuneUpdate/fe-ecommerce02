@@ -1,52 +1,38 @@
 <template>
-  <v-container fluid>
+  <v-card fluid>
     <v-data-table
-      :headers="computedHeaders"
+      :headers="headers"
       :items="data"
       :items-per-page="5"
       class="elevation-5 pt-5"
       :class="tableClass"
-      hide-default-header="true"
       outlined
+      dense
+      :hide-default-header="false"
     >
-      <!-- Header tuỳ chỉnh -->
-      <template #top>
-        <table class="v-table__wrapper">
-          <thead>
-            <tr>
-              <slot name="header">
-                <th v-for="header in computedHeaders" :key="header.value">
-                  {{ header.text }}
-                </th>
-              </slot>
-            </tr>
-          </thead>
-        </table>
-      </template>
-
       <!-- Slot cho hàng -->
       <template #item="{ item }">
         <tr>
-          <slot name="item" :item="item">
-            <td
-              v-for="header in computedHeaders"
-              :key="header.value"
-              class="d-flex justify-center align-center"
+          <td v-for="header in headers" :key="header.value" class="text-center">
+            <slot
+              :name="`item.${header.value}`"
+              :item="item"
+              :value="item[header.value]"
             >
               {{ item[header.value] }}
-            </td>
-          </slot>
+            </slot>
+          </td>
         </tr>
       </template>
     </v-data-table>
-  </v-container>
+  </v-card>
 </template>
 
 <script>
 export default {
   name: "BaseTable",
   props: {
-    columns: {
+    headers: {
       type: Array,
       default: () => [],
     },
@@ -56,21 +42,17 @@ export default {
     },
     type: {
       type: String,
-      default: "", // e.g., "striped", "hover"
+      default: "",
     },
   },
+  mounted() {
+    console.log("Headers:", this.headers);
+    console.log("Data:", this.data);
+    if (!this.headers.length) {
+      console.warn("Headers is empty. Please provide valid headers.");
+    }
+  },
   computed: {
-    computedHeaders() {
-      // Chuyển columns như ["ID", "Name"] → [{ text: "ID", value: "id" }]
-      return this.columns.map((col) => ({
-        text: col,
-        value: col.toLowerCase(),
-      }));
-    },
-    headers() {
-      // Tên key của column để render trong slot
-      return this.computedHeaders;
-    },
     tableClass() {
       return {
         "table-striped": this.type === "striped",
@@ -80,3 +62,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.v-data-table th {
+  background-color: #f5f5f5 !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+  display: table-cell !important;
+}
+.v-data-table td {
+  font-size: 0.875rem;
+  text-align: center;
+}
+</style>

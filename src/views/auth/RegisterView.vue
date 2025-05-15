@@ -20,7 +20,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <RouterLink to="/login">Đã có tài khoản? Đăng nhập</RouterLink>
+        <div @click="openLogin">Đã có tài khoản? Đăng nhập</div>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -28,6 +28,8 @@
 
 <script>
 export default {
+  inject: ["Emitter"],
+
   data() {
     return {
       name: "",
@@ -36,6 +38,9 @@ export default {
     };
   },
   methods: {
+    openLogin() {
+      this.Emitter.emit("openLogin");
+    },
     register() {
       console.log("Thông tin đăng ký:", this.name, this.email);
       // Xử lý đăng ký tại đây

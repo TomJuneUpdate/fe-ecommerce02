@@ -1,10 +1,11 @@
-import AdminLayout from "@/components/global/AdminLayout.vue";
+import AdminLayout from "@/components/admin_page/AdminLayout.vue";
 
 import AppLayout from "@/components/global/AppLayout.vue";
 import AdminDasdboard from "@/views/admin/AdminDasdboard.vue";
 import OrderManage from "@/views/admin/OrderManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
 import UserManage from "@/views/admin/UserManage.vue";
+import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import ProjectManage from "@/views/ProjectManage.vue";
 import HomeView from "@/views/user/HomeView.vue";
@@ -38,6 +39,11 @@ const routes = [
         path: "register",
         name: "RegisterView",
         component: RegisterView,
+      },
+      {
+        path: "login",
+        name: "LoginView",
+        component: LoginView,
       },
     ],
   },

@@ -60,7 +60,7 @@
               })
             "
           >
-            <div class="d-flex align-center px-0">
+            <div class="d-flex align-center">
               <v-list-item-icon><v-icon>mdi-account</v-icon></v-list-item-icon>
               <v-list-item-title class="pl-4">Users</v-list-item-title>
             </div>
@@ -68,11 +68,11 @@
         </v-list>
       </v-navigation-drawer>
       <!-- Topbar -->
-      <v-app-bar app>
+      <v-app-bar app class="px-4 py-2">
         <v-toolbar-title>E-Commerce Admin</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon><v-icon>mdi-bell</v-icon></v-btn>
-        <v-btn icon><v-icon>mdi-account-circle</v-icon></v-btn>
+        <v-btn icon class="mr-1"><v-icon>mdi-bell</v-icon></v-btn>
+        <UserProfile />
       </v-app-bar>
 
       <v-main>
@@ -81,3 +81,13 @@
     </v-container>
   </div>
 </template>
+
+<script>
+import UserProfile from "@/components/global/UserProfile.vue";
+export default {
+  name: "AdminLayout",
+  components: {
+    UserProfile,
+  },
+};
+</script>

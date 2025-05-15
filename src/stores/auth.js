@@ -1,30 +1,62 @@
+// src/stores/auth.js
 import { defineStore } from "pinia";
-import axios from "axios";
+import AuthService from "@/services/auth.service";
+
+const storedUser = JSON.parse(localStorage.getItem("user"));
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    token: localStorage.getItem("token") || "",
-    user: null,
+    user: storedUser || null,
+    token: storedUser?.token || null, // Lưu token riêng
+    status: storedUser ? { loggedIn: true } : { loggedIn: false },
+    error: null,
   }),
 
   actions: {
-    async login(credentials) {
+    async login({ username, password }) {
       try {
-        const res = await axios.post("/api/v1/auth/login", credentials);
-        this.token = res.data.token;
-
-        localStorage.setItem("token", this.token);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
-      } catch (error) {
-        throw error.response?.data?.message || "Login failed";
+        const userData = await AuthService.login({ username, password });
+        this.user = userData;
+        this.token = userData.token; // Lưu token
+        this.status.loggedIn = true;
+        this.error = null;
+        console.log("Đăng nhập thành công, user:", userData);
+        return userData;
+      } catch (err) {
+        this.user = null;
+        this.token = null;
+        this.status.loggedIn = false;
+        this.error = err.response?.data?.message || "Lỗi đăng nhập";
+        console.error("Lỗi đăng nhập:", this.error);
+        throw err;
       }
     },
 
     logout() {
-      this.token = "";
+      AuthService.logout();
       this.user = null;
-      localStorage.removeItem("token");
-      delete axios.defaults.headers.common["Authorization"];
+      this.token = null;
+      this.status.loggedIn = false;
+      this.error = null;
+      console.log("Đã đăng xuất");
     },
+
+    async register({ username, email, password }) {
+      try {
+        await AuthService.register({ username, email, password });
+        this.error = null;
+        console.log("Đăng ký thành công");
+      } catch (err) {
+        this.error = err.response?.data?.message || "Lỗi đăng ký";
+        console.error("Lỗi đăng ký:", this.error);
+        throw err;
+      }
+    },
+  },
+
+  getters: {
+    getToken: (state) => state.token,
+    isLoggedIn: (state) => state.status.loggedIn,
+    currentUser: (state) => state.user,
   },
 });
