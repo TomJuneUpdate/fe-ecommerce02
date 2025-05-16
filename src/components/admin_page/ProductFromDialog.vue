@@ -54,19 +54,17 @@
 export default {
   name: "ProductForm",
   inject: ["Emitter"], // inject emitter từ provide ở main.js
-  data() {
-    return {
-      productFormDialog: false,
-      productForm: {
-        id: null,
-        name: "",
-        description: "",
-        price: null,
-        category: null,
-      },
-      categories: ["Electronics", "Books", "Clothing"],
-    };
-  },
+  data: () => ({
+    productForm: {
+      id: null,
+      name: "",
+      image: "",
+      description: "",
+      price: null,
+      category: null,
+    },
+    categories: ["Electronics", "Books", "Clothing"],
+  }),
   methods: {
     open(product = null) {
       this.productFormDialog = true;
@@ -75,14 +73,16 @@ export default {
         : {
             id: null,
             name: "",
+            image: "",
             description: "",
             price: null,
             category: null,
           };
     },
     submitProduct() {
-      const event = this.productForm.id ? "edit-product" : "add-product";
-      this.Emitter.emit(event, { ...this.productForm });
+      this.Emitter.emit(this.productForm.id ? "edit-product" : "add-product", {
+        ...this.productForm,
+      });
       this.resetProductForm();
     },
 
@@ -90,6 +90,7 @@ export default {
       this.productForm = {
         id: null,
         name: "",
+        image: "",
         description: "",
         price: null,
         category: null,

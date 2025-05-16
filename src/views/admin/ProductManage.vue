@@ -6,7 +6,6 @@
         v-model="productFormDialog"
         :product="productForm"
         :categories="categories"
-        @submit="submitProduct"
         @close="resetProductForm"
       ></ProductFromDialog>
 
@@ -155,22 +154,24 @@ export default {
       productForm: {
         id: null,
         name: "",
+        image: "",
         description: "",
         price: "",
         category: "",
       },
       categories: ["Điện tử", "Thời trang", "Gia dụng"],
+      productFormDialog: false,
       deleteDialog: false,
       deleteId: null,
       snackbar: { show: false, message: "", color: "" },
     };
   },
-  mounted() {
-    this.addProduct();
-  },
   methods: {
     addProduct() {
-      this.Emitter.on("add-product");
+      this.Emitter.on("add-product", (product) => {
+        this.products.push(product);
+      });
+      this.productFormDialog = true;
     },
 
     editProduct(product) {

@@ -109,8 +109,8 @@
                         product.price -
                           (product.price * product.discountPercentage) / 100
                       )
-                    }}</span
-                  >
+                    }}
+                  </span>
                 </v-card-text>
                 <v-card-text class="pl-0 pt-0">Quantity</v-card-text>
                 <div
