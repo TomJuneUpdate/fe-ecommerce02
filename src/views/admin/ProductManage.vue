@@ -6,7 +6,7 @@
         v-model="productFormDialog"
         :product="productForm"
         :categories="categories"
-        @close="resetProductForm"
+        @close="productFormDialog = false"
       ></ProductFromDialog>
 
       <!-- Bảng danh sách sản phẩm -->

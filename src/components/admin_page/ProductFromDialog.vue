@@ -95,7 +95,7 @@ export default {
         price: null,
         category: null,
       };
-      this.productFormDialog = false;
+      this.$emit("close"); // <--- thêm dòng này
     },
   },
 };
